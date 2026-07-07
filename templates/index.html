@@ -1,48 +1,50 @@
-document.getElementById("loginForm").addEventListener("submit", function(e) {
+<!DOCTYPE html>
+<html lang="en">
 
-    e.preventDefault();
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    <title>Login</title>
 
-
-    fetch("/login", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
-
-    })
-
-    .then(response => response.json())
-
-    .then(data => {
-
-        document.getElementById("result").innerHTML = data.message;
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
 
 
-        if (data.success) {
+<body>
 
-            window.location.href = "/dashboard";
+<div class="container">
 
-        }
+    <form id="loginForm">
 
-    })
+        <h2>Login</h2>
 
-    .catch(error => {
+        <input 
+            type="text"
+            id="username"
+            placeholder="Username"
+            required>
 
-        console.log(error);
+        <input 
+            type="password"
+            id="password"
+            placeholder="Password"
+            required>
 
-        document.getElementById("result").innerHTML =
-        "Something went wrong!";
+        <button type="submit">
+            Login
+        </button>
 
-    });
+        <p id="result"></p>
 
-});
+    </form>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
