@@ -1,39 +1,44 @@
-// Login Form
-
-const form = document.getElementById("loginForm");
-
-form.addEventListener("submit", async function(e){
+// Login
+document.getElementById("loginForm").addEventListener("submit", function(e) {
 
     e.preventDefault();
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const response = await fetch("/login",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
         },
-
-        body:JSON.stringify({
-            username:username,
-            password:password
+        body: JSON.stringify({
+            username: document.getElementById("loginUsername").value,
+            password: document.getElementById("loginPassword").value
         })
-
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("result").innerHTML = data.message;
     });
 
-    const data = await response.json();
+});
 
-    const result = document.getElementById("result");
 
-    if(data.success){
-        result.style.color="lime";
-    }else{
-        result.style.color="red";
-    }
+// Register
+document.getElementById("registerForm").addEventListener("submit", function(e) {
 
-    result.innerText = data.message;
+    e.preventDefault();
+
+    fetch("/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: document.getElementById("registerUsername").value,
+            password: document.getElementById("registerPassword").value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("result").innerHTML = data.message;
+    });
 
 });

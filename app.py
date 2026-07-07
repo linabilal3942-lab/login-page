@@ -5,11 +5,13 @@ import os
 
 app = Flask(__name__)
 
-# Database configuration
+# Database
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL",
     "sqlite:///users.db"
 )
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
@@ -21,24 +23,54 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
 
 
-# Create database and default user
+# Create Database Table
 with app.app_context():
     db.create_all()
 
-    if not User.query.filter_by(username="admin").first():
-        user = User(
-            username="admin",
-            password=generate_password_hash("1234")
-        )
-        db.session.add(user)
-        db.session.commit()
 
-
+# Home Page
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# Register API
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({
+            "success": False,
+            "message": "Username and password required!"
+        })
+
+    user_exists = User.query.filter_by(username=username).first()
+
+    if user_exists:
+        return jsonify({
+            "success": False,
+            "message": "Username already exists!"
+        })
+
+    new_user = User(
+        username=username,
+        password=generate_password_hash(password)
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Registration Successful!"
+    })
+
+
+# Login API
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
