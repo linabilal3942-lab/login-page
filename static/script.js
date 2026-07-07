@@ -1,44 +1,48 @@
-// Login
 document.getElementById("loginForm").addEventListener("submit", function(e) {
 
     e.preventDefault();
 
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+
     fetch("/login", {
+
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
+
         body: JSON.stringify({
-            username: document.getElementById("loginUsername").value,
-            password: document.getElementById("loginPassword").value
+            username: username,
+            password: password
         })
+
     })
+
     .then(response => response.json())
+
     .then(data => {
+
         document.getElementById("result").innerHTML = data.message;
-    });
-
-});
 
 
-// Register
-document.getElementById("registerForm").addEventListener("submit", function(e) {
+        if (data.success) {
 
-    e.preventDefault();
+            window.location.href = "/dashboard";
 
-    fetch("/register", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username: document.getElementById("registerUsername").value,
-            password: document.getElementById("registerPassword").value
-        })
+        }
+
     })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("result").innerHTML = data.message;
+
+    .catch(error => {
+
+        console.log(error);
+
+        document.getElementById("result").innerHTML =
+        "Something went wrong!";
+
     });
 
 });
